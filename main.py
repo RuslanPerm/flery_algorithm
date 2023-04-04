@@ -46,9 +46,12 @@ def step(start_vertex, graph_structure):  # проходим по ребру, п
     for n_v in neighbours_of_start_vertex:
         neighbours_of_neighbour = graph_structure.get(n_v)  # берём список соседей соседей начальной точки
 
-        #  у какой вершины меньше соседей, ту вершину и выбираем  (не работает пачиму тавюювафвыафыва(...)
-        if len(neighbours_of_neighbour) < len(graph_structure.get(finish_vertex)):
+        if n_v != start:  # условие, что если есть непройденные вершины помимо стартовой, то выбираем её
             finish_vertex = n_v
+
+            #  у какой вершины меньше соседей, ту вершину и выбираем.
+            if len(neighbours_of_neighbour) < len(graph_structure.get(finish_vertex)):
+                finish_vertex = n_v
 
     neighbours_of_finish_vertex = graph_structure.get(finish_vertex)  # берём список соседей конечной вершины
 
@@ -65,16 +68,18 @@ def step(start_vertex, graph_structure):  # проходим по ребру, п
 
 
 def built_circle(base_graph):
+    global start
     if base_graph[0] == 'eiler':  # если граф эйлеровый
         lst_v = [i for i in base_graph[1].keys()]  # составляем список вершин
-        current_vertex = random.choice(lst_v)  # выбираем случайную вершину
-        way_v = [current_vertex]  # создаём список, куда последовательно будем добавлять пройденные вершины
-
+        start = random.choice(lst_v)  # выбираем случайную вершину
         graph = base_graph[1]  # для удобства работы создаём словарь граф, с которым в последствие и будем работать
-        for i in range(len(lst_v)):
+        graph, current_vertex = step(start, graph)  # проходим одну итерацию по графу
+        way_v = [start, current_vertex]  # создаём список, куда последовательно будем добавлять пройденные вершины
+
+        while current_vertex != start:
             graph, current_vertex = step(current_vertex, graph)
             way_v.append(current_vertex)
-        return way_v
+        return 'Граф является эйлеровым, вот его маршрут: ', way_v
 
     elif base_graph[0] == 'semi-eiler':  # если граф полуэйлеровый
         pass
@@ -82,7 +87,9 @@ def built_circle(base_graph):
         return 'Граф не является Эйлеровым, невозможно использовать алгоритм Флери'
 
 
+# Если Вы хотите ввести свой граф, уберите # у следующей строки и закомментируйте пример
 # l_v = graph_creation()
+
 # эйлеров граф (пример)
 a, b, c, d, e, f = 'a', 'b', 'c', 'd', 'e', 'f'
 l_v = {
