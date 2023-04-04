@@ -38,13 +38,45 @@ def check_e_condition(link_vertex):
         return 'not eiler'
 
 
-def built_circle(graph):
-    if graph[0] == 'eiler':  # если граф эйлеровый
-        lst_v = [i for i in graph[1].keys()]  # составляем список вершин
-        aa = random.choice(lst_v)  # выбираем случайную вершину
-        return aa
+def step(start_vertex, graph_structure):  # проходим по ребру, после удаляем его
+    neighbours_of_start_vertex = graph_structure.get(start_vertex)  # берём список соседей начальной вершины
 
-    elif graph[0] == 'semi-eiler':  # если граф полуэйлеровый
+    # составляем словарь соседей соседей начальной точки
+    finish_vertex = random.choice(neighbours_of_start_vertex)  # выбираем случайного соседа
+    for n_v in neighbours_of_start_vertex:
+        neighbours_of_neighbour = graph_structure.get(n_v)  # берём список соседей соседей начальной точки
+
+        #  у какой вершины меньше соседей, ту вершину и выбираем  (не работает пачиму тавюювафвыафыва(...)
+        if len(neighbours_of_neighbour) < len(graph_structure.get(finish_vertex)):
+            finish_vertex = n_v
+
+    neighbours_of_finish_vertex = graph_structure.get(finish_vertex)  # берём список соседей конечной вершины
+
+    neighbours_of_start_vertex.remove(finish_vertex)  # удаляем конечную вершину из соседей начальной вершины
+    neighbours_of_finish_vertex.remove(start_vertex)  # удаляем начальную вершину из соседей конечной вершины
+
+    # обновляем граф, учитывая удалённое ребро
+    graph_structure.update({start_vertex: neighbours_of_start_vertex})
+    graph_structure.update({finish_vertex: neighbours_of_finish_vertex})
+
+    print(f'Из {start_vertex} в {finish_vertex}')
+
+    return graph_structure, finish_vertex
+
+
+def built_circle(base_graph):
+    if base_graph[0] == 'eiler':  # если граф эйлеровый
+        lst_v = [i for i in base_graph[1].keys()]  # составляем список вершин
+        current_vertex = random.choice(lst_v)  # выбираем случайную вершину
+        way_v = [current_vertex]  # создаём список, куда последовательно будем добавлять пройденные вершины
+
+        graph = base_graph[1]  # для удобства работы создаём словарь граф, с которым в последствие и будем работать
+        for i in range(len(lst_v)):
+            graph, current_vertex = step(current_vertex, graph)
+            way_v.append(current_vertex)
+        return way_v
+
+    elif base_graph[0] == 'semi-eiler':  # если граф полуэйлеровый
         pass
     else:
         return 'Граф не является Эйлеровым, невозможно использовать алгоритм Флери'
