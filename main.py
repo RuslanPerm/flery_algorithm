@@ -1,3 +1,6 @@
+import random
+
+
 # создание графа
 def graph_creation():
     try:
@@ -7,13 +10,9 @@ def graph_creation():
         # составляем граф, создавая по 1 вершине и прикрепляя к ней связаннные вершины в виде списка
         for vertex in range(vertex_quantity):
             v_name = input('Введите название вершины: ')
-            linked_vertex_quantity = int(input('Со сколькими вершинами она связана: '))
-            linked_vertex_list = []
+            linked_vertex_list = input(f'Введите название вершин, связанных с {v_name} (через пробел): ').split()
 
-            for v in range(linked_vertex_quantity):
-                linked_vertex_list.append(input(f'Введите название вершины, связанной с {v_name}: '))
-
-            l_v.update({v_name: linked_vertex_list})
+            l_v.update({v_name: linked_vertex_list})  # добавляем в словарь к ключу вершины список из связанных вершин
 
         return l_v
 
@@ -32,21 +31,36 @@ def check_e_condition(link_vertex):
             link_count += 1
 
     if link_count == len(vertex_list):  # все ли вершины чётные
-        return 'eiler'
+        return ['eiler', link_vertex]  # возвращаем тип графа, сам граф
     elif len(vertex_list) - link_count >= 2:  # если кол-во вершин с нечётной степенью меньше или равно 2
-        return 'semi-eiler'
+        return ['semi-eiler', link_vertex]  # возвращаем тип графа, сам граф
+    else:
+        return 'not eiler'
 
 
+def built_circle(graph):
+    if graph[0] == 'eiler':  # если граф эйлеровый
+        lst_v = [i for i in graph[1].keys()]  # составляем список вершин
+        aa = random.choice(lst_v)  # выбираем случайную вершину
+        return aa
+
+    elif graph[0] == 'semi-eiler':  # если граф полуэйлеровый
+        pass
+    else:
+        return 'Граф не является Эйлеровым, невозможно использовать алгоритм Флери'
+
+
+# l_v = graph_creation()
 # эйлеров граф (пример)
-# a, b, c, d, e, f = '1', '2', '3', '4', '5', '6'
-# l_v = {
-#     a: [b, c],
-#     b: [a, c, d, e],
-#     c: [b, f, d, a],
-#     d: [b, e, c, f],
-#     e: [b, d],
-#     f: [c, d]
-# }
+a, b, c, d, e, f = 'a', 'b', 'c', 'd', 'e', 'f'
+l_v = {
+    a: [b, c],
+    b: [a, c, d, e],
+    c: [b, f, d, a],
+    d: [b, e, c, f],
+    e: [b, d],
+    f: [c, d]
+}
 
-# check_e_condition(l_v)
-check_e_condition(graph_creation())
+is_graph_e = check_e_condition(l_v)
+print(built_circle(check_e_condition(l_v)))
