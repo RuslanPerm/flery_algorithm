@@ -44,17 +44,11 @@ def step(start_vertex, graph_structure):  # проходим по ребру, п
     # составляем словарь соседей соседей начальной точки
     finish_vertex = random.choice(neighbours_of_start_vertex)  # выбираем случайного соседа
     for n_v in neighbours_of_start_vertex:
-        neighbours_of_neighbour = graph_structure.get(n_v)  # берём список соседей соседей начальной точки
 
         if n_v != start:  # условие, что если есть непройденные вершины помимо стартовой, то выбираем её
             finish_vertex = n_v
 
-            #  у какой вершины меньше соседей, ту вершину и выбираем.
-            if len(neighbours_of_neighbour) < len(graph_structure.get(finish_vertex)):
-                finish_vertex = n_v
-
     neighbours_of_finish_vertex = graph_structure.get(finish_vertex)  # берём список соседей конечной вершины
-
     neighbours_of_start_vertex.remove(finish_vertex)  # удаляем конечную вершину из соседей начальной вершины
     neighbours_of_finish_vertex.remove(start_vertex)  # удаляем начальную вершину из соседей конечной вершины
 
@@ -87,19 +81,26 @@ def built_circle(base_graph):
         return 'Граф не является Эйлеровым, невозможно использовать алгоритм Флери'
 
 
+def built_way(base_graph):
+    pass
+
+
 # Если Вы хотите ввести свой граф, уберите # у следующей строки и закомментируйте пример
-# l_v = graph_creation()
+l_v = graph_creation()
 
 # эйлеров граф (пример)
 a, b, c, d, e, f = 'a', 'b', 'c', 'd', 'e', 'f'
-l_v = {
-    a: [b, c],
-    b: [a, c, d, e],
-    c: [b, f, d, a],
-    d: [b, e, c, f],
-    e: [b, d],
-    f: [c, d]
-}
+# l_v = {
+#     a: [b, c],
+#     b: [a, c, d, e],
+#     c: [b, f, d, a],
+#     d: [b, e, c, f],
+#     e: [b, d],
+#     f: [c, d]
+# }
 
 is_graph_e = check_e_condition(l_v)
-print(built_circle(check_e_condition(l_v)))
+print(l_v)
+print(built_circle(is_graph_e))
+print(built_way(is_graph_e))
+
