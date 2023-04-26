@@ -40,15 +40,36 @@ def check_e_condition(link_vertex):
 
 def step(start_vertex, graph_structure):  # проходим по ребру, после удаляем его
     neighbours_of_start_vertex = graph_structure.get(start_vertex)  # берём список соседей начальной вершины
+    print("берём список соседей начальной вершины: ", neighbours_of_start_vertex)
+
+    if len(neighbours_of_start_vertex) > 1:
+        finish_vertex = graph_structure.get(neighbours_of_start_vertex[0])[0]  # пусть макс. соседей у 1ой вершины
+        max_neighbours = len(graph_structure.get(finish_vertex))  # берём кол-во её соседей
+
+        print("Вершина, кол-во соседей: ", finish_vertex, max_neighbours)
+
+        for v_to_chose in neighbours_of_start_vertex:  # перебираем все вершины, у кого больше соседей, туда и идём
+            if v_to_chose != start_vertex:  # условие, что непройденная вершина не стартовая
+                cur_neighbours = len(graph_structure.get(v_to_chose))  # берём кол-во соседей нынешней вершины
+
+                if cur_neighbours > max_neighbours:
+                    max_neighbours = cur_neighbours
+                    finish_vertex = v_to_chose
+                    print("Макс. вершина, кол-во соседей: ", finish_vertex, max_neighbours)
+
+    else:
+        finish_vertex = neighbours_of_start_vertex[0]
+        print("Вершина: ", finish_vertex)
 
     # составляем словарь соседей соседей начальной точки
-    finish_vertex = random.choice(neighbours_of_start_vertex)  # выбираем случайного соседа
-    for n_v in neighbours_of_start_vertex:
-
-        if n_v != start:  # условие, что если есть непройденные вершины помимо стартовой, то выбираем её
-            finish_vertex = n_v
+    # finish_vertex = random.choice(neighbours_of_start_vertex)  # выбираем случайного соседа
+    # for n_v in neighbours_of_start_vertex:
+    #     if n_v != start:  # условие, что если есть непройденные вершины помимо стартовой, то выбираем её
+    #         finish_vertex = n_v
 
     neighbours_of_finish_vertex = graph_structure.get(finish_vertex)  # берём список соседей конечной вершины
+
+    print(finish_vertex)
     neighbours_of_start_vertex.remove(finish_vertex)  # удаляем конечную вершину из соседей начальной вершины
     neighbours_of_finish_vertex.remove(start_vertex)  # удаляем начальную вершину из соседей конечной вершины
 
@@ -65,8 +86,9 @@ def built_circle(base_graph):
     global start
     if base_graph[0] == 'eiler':  # если граф эйлеровый
         lst_v = [i for i in base_graph[1].keys()]  # составляем список вершин
-        start = random.choice(lst_v)  # выбираем случайную вершину
-        graph = base_graph[1]  # для удобства работы создаём словарь граф, с которым в последствие и будем работать
+        # start = random.choice(lst_v)  # выбираем случайную вершину
+        start = c
+        graph = base_graph[1].copy()  # для удобства работы создаём словарь граф, с которым и будем работать
         graph, current_vertex = step(start, graph)  # проходим одну итерацию по графу
         way_v = [start, current_vertex]  # создаём список, куда последовательно будем добавлять пройденные вершины
 
@@ -86,21 +108,21 @@ def built_way(base_graph):
 
 
 # Если Вы хотите ввести свой граф, уберите # у следующей строки и закомментируйте пример
-l_v = graph_creation()
+# l_v = graph_creation()
 
 # эйлеров граф (пример)
 a, b, c, d, e, f = 'a', 'b', 'c', 'd', 'e', 'f'
-# l_v = {
-#     a: [b, c],
-#     b: [a, c, d, e],
-#     c: [b, f, d, a],
-#     d: [b, e, c, f],
-#     e: [b, d],
-#     f: [c, d]
-# }
+l_v = {
+    a: [b, c],
+    b: [a, c, d, e],
+    c: [b, f, d, a],
+    d: [b, e, c, f],
+    e: [b, d],
+    f: [c, d]
+}
 
 is_graph_e = check_e_condition(l_v)
-print(l_v)
+# print(l_v)
 print(built_circle(is_graph_e))
 print(built_way(is_graph_e))
 
