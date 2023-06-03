@@ -39,46 +39,38 @@ def check_e_condition(link_vertex):
 
 
 def step(start_vertex, graph_structure):  # проходим по ребру, после удаляем его
-    neighbours_of_start_vertex = graph_structure.get(start_vertex)  # берём список соседей начальной вершины
-    print("берём список соседей начальной вершины: ", neighbours_of_start_vertex)
+    print("start", start_vertex)
+    # берём список соседей начальной вершины
+    neighbours_of_start_vertex = graph_structure.get(start_vertex)
+    print('start neighbours', neighbours_of_start_vertex)
 
-    if len(neighbours_of_start_vertex) > 1:
-        finish_vertex = graph_structure.get(neighbours_of_start_vertex[0])[0]  # пусть макс. соседей у 1ой вершины
-        max_neighbours = len(graph_structure.get(finish_vertex))  # берём кол-во её соседей
+    finish_vertex = random.choice(neighbours_of_start_vertex)
+    print('finish', finish_vertex)
 
-        print("Вершина, кол-во соседей: ", finish_vertex, max_neighbours)
+    # берём список соседей конечной вершины
+    neighbours_of_finish_vertex = graph_structure.get(finish_vertex)
+    print('finish neighbours', neighbours_of_finish_vertex)
 
-        for v_to_chose in neighbours_of_start_vertex:  # перебираем все вершины, у кого больше соседей, туда и идём
-            if v_to_chose != start_vertex:  # условие, что непройденная вершина не стартовая
-                cur_neighbours = len(graph_structure.get(v_to_chose))  # берём кол-во соседей нынешней вершины
+    if len(neighbours_of_finish_vertex) > 1:
+        if finish_vertex != start:
+            if finish_vertex:
+                # удаляем конечную вершину из соседей начальной вершины
+                neighbours_of_start_vertex.remove(finish_vertex)
+                # удаляем начальную вершину из соседей конечной вершины
+                neighbours_of_finish_vertex.remove(start_vertex)
 
-                if cur_neighbours > max_neighbours:
-                    max_neighbours = cur_neighbours
-                    finish_vertex = v_to_chose
-                    print("Макс. вершина, кол-во соседей: ", finish_vertex, max_neighbours)
+                # обновляем граф, учитывая удалённое ребро
+                graph_structure.update({start_vertex: neighbours_of_start_vertex})
+                graph_structure.update({finish_vertex: neighbours_of_finish_vertex})
 
+                print(f'Из {start_vertex} в {finish_vertex}')
+
+        else:
+            print(f"Вершина {finish_vertex} совпадает с {start}")
+            return step(start_vertex, graph_structure)
     else:
-        finish_vertex = neighbours_of_start_vertex[0]
-        print("Вершина: ", finish_vertex)
-
-    # составляем словарь соседей соседей начальной точки
-    # finish_vertex = random.choice(neighbours_of_start_vertex)  # выбираем случайного соседа
-    # for n_v in neighbours_of_start_vertex:
-    #     if n_v != start:  # условие, что если есть непройденные вершины помимо стартовой, то выбираем её
-    #         finish_vertex = n_v
-
-    neighbours_of_finish_vertex = graph_structure.get(finish_vertex)  # берём список соседей конечной вершины
-
+        print("Осталась конечная вершина, ", finish_vertex)
     print(finish_vertex)
-    neighbours_of_start_vertex.remove(finish_vertex)  # удаляем конечную вершину из соседей начальной вершины
-    neighbours_of_finish_vertex.remove(start_vertex)  # удаляем начальную вершину из соседей конечной вершины
-
-    # обновляем граф, учитывая удалённое ребро
-    graph_structure.update({start_vertex: neighbours_of_start_vertex})
-    graph_structure.update({finish_vertex: neighbours_of_finish_vertex})
-
-    print(f'Из {start_vertex} в {finish_vertex}')
-
     return graph_structure, finish_vertex
 
 
@@ -124,5 +116,5 @@ l_v = {
 is_graph_e = check_e_condition(l_v)
 # print(l_v)
 print(built_circle(is_graph_e))
-print(built_way(is_graph_e))
+# print(built_way(is_graph_e))
 
